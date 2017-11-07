@@ -5,9 +5,9 @@ import cern.root.pipeline.*
 
 properties([
     parameters([
-        string(name: 'ghprbPullId', defaultValue: '516'),
+        string(name: 'ghprbPullId', defaultValue: '61'),
         string(name: 'ghprbGhRepository', defaultValue: 'HEP-FCC/podio'),
-        string(name: 'ghprbCommentBody', defaultValue: '@phsft-bot build'),
+        string(name: 'ghprbCommentBody', defaultValue: '@fcc-bot build'),
         string(name: 'ghprbTargetBranch', defaultValue: 'master'),
         string(name: 'ghprbActualCommit', defaultValue: ''),
         string(name: 'sha1', defaultValue: ''),

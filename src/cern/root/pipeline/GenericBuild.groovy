@@ -35,9 +35,9 @@ class GenericBuild implements Serializable {
            addBuildParameter(p.name, String.valueOf(p.value))
         }
 
-        // Always build the same branch on root and roottest
-        addBuildParameter('ROOT_BRANCH', script.params.VERSION)
-        addBuildParameter('ROOTTEST_BRANCH', script.params.VERSION)
+        // Always build the same branch on root a nd roottest
+        addBuildParameter('PODIO_BRANCH', script.params.VERSION)
+        addBuildParameter('PODIOTEST_BRANCH', script.params.VERSION)
     }
 
     private def performBuild(label, compiler, buildType) {
@@ -78,9 +78,9 @@ class GenericBuild implements Serializable {
     void buildOn(label, compiler, buildType) {
         script.println "Preparing build on $label"
         def configurationLabel = "$label-$compiler-$buildType"
-        configuration[configurationLabel] = { 
+        configuration[configurationLabel] = {
             script.stage("Build - $configurationLabel") {
-                performBuild(label, compiler, buildType) 
+                performBuild(label, compiler, buildType)
             }
         }
     }
@@ -134,8 +134,8 @@ class GenericBuild implements Serializable {
      */
     @NonCPS
     void sendEmails() {
-        def binding = ['build': script.currentBuild.rawBuild, 
-                'rooturl': Jenkins.getActiveInstance().getRootUrl(), 
+        def binding = ['build': script.currentBuild.rawBuild,
+                'rooturl': Jenkins.getActiveInstance().getRootUrl(),
                 'buildResults': buildResults,
                 'it': new ScriptContentBuildWrapper(script.currentBuild.rawBuild),
                 'project': script.currentBuild.rawBuild.getParent()]
@@ -147,7 +147,7 @@ class GenericBuild implements Serializable {
 
         def result = template.make(binding).toString()
 
-        def recipients = 'pcanal@fnal.gov, patricia.mendez@cern.ch, pere.mato@cern.ch, danilo.piparo@cern.ch'
+        def recipients = 'javier.cervantes.villanueva@cern.ch, benedikt.hegner@cern.ch'
 
         script.emailext(
                 body: result, mimeType: 'text/html',

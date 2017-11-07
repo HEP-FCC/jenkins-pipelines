@@ -1,6 +1,6 @@
 #!groovy
 
-@Library('root-pipelines')
+@Library('fcc-pipelines')
 import cern.root.pipeline.*
 
 properties([

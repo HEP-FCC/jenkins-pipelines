@@ -45,11 +45,12 @@ node(LABEL) {
             //     }
             // }
 
-            // dir('rootspi') {
-            //     retry(3) {
-            //         git url: 'https://github.com/root-project/rootspi.git'
-            //     }
-            // }
+            dir('fcc-spi') {
+                retry(3) {
+                    checkout([$class: 'GitSCM', branches: [[name: 'build-scripts']], doGenerateSubmoduleConfigurations: false, extensions: [],
+                          submoduleCfg: [], userRemoteConfigs: [[url: env.GIT_URL]]])
+                }
+            }
         }
 
         try {
@@ -57,14 +58,7 @@ node(LABEL) {
                 if (LABEL == 'windows10') {
                     bat 'rootspi/jenkins/jk-all.bat'
                 } else {
-                    sh 'touch $WORKSPACE/controlfile'
-                    sh 'cd podio'
-                    sh 'source $WORKSPACE/podio/init.sh'
-                    sh 'mkdir build'
-                    sh 'cd build'
-                    sh 'cmake -DCMAKE_INSTALL_PREFIX=../install -Dpodio_tests=ON ..'
-                    sh 'make'
-                    sh 'make install'
+                    sh 'fcc-spi/builds/podio-build.sh'
                 }
             }
 

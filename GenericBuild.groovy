@@ -48,7 +48,7 @@ node(LABEL) {
             dir('fcc-spi') {
                 retry(3) {
                     checkout([$class: 'GitSCM', branches: [[name: 'build-scripts']], doGenerateSubmoduleConfigurations: false, extensions: [],
-                          submoduleCfg: [], userRemoteConfigs: [[url: env.GIT_URL]]])
+                          submoduleCfg: [], userRemoteConfigs: [[url: 'https://github.com/HEP-FCC/fcc-spi.git']]])
                 }
             }
         }

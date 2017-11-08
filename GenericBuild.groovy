@@ -59,7 +59,7 @@ node(LABEL) {
                 } else {
                     sh 'touch $WORKSPACE/controlfile'
                     sh 'cd podio'
-                    sh 'source init.sh'
+                    sh 'source $WORKSPACE/podio/init.sh'
                     sh 'mkdir build'
                     sh 'cd build'
                     sh 'cmake -DCMAKE_INSTALL_PREFIX=../install -Dpodio_tests=ON ..'

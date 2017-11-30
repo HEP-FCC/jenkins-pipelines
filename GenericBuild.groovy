@@ -2,15 +2,17 @@
 
 properties([
     parameters([
-        string(name: 'PODIO_REFSPEC', defaultValue: '', description: 'Refspec for PODIO repository'),
-        string(name: 'PODIOTEST_REFSPEC', defaultValue: '', description: 'Refspec for PODIOtest repository'),
-        string(name: 'PODIOTEST_BRANCH', defaultValue: 'master', description: 'Name of the PODIO branch to work with'),
-        string(name: 'PODIO_BRANCH', defaultValue: 'master', description: 'Name of the podiotest branch to work with'),
+        string(name: 'PKG_NAME', defaultValue: '', description: 'Name of the package to be built'),
+        string(name: 'PKG_REFSPEC', defaultValue: '', description: 'Refspec for PACKAGE repository'),
+        string(name: 'PKGTEST_REFSPEC', defaultValue: '', description: 'Refspec for PACKAGE test repository'),
+        string(name: 'PKGTEST_BRANCH', defaultValue: 'master', description: 'Name of the PACKAGE branch to work with'),
+        string(name: 'PKG_BRANCH', defaultValue: 'master', description: 'Name of the podiotest branch to work with'),
         string(name: 'BUILD_NOTE', defaultValue: '', description: 'Note to add after label/compiler in job name'),
         string(name: 'BUILD_DESCRIPTION', defaultValue: '', description: 'Build description')
     ])
 ])
 
+def pkg_name=PKG_NAME.toLowerCase()
 
 // Treat parameters as environment variables
 for (ParameterValue p in params) {
@@ -26,11 +28,11 @@ currentBuild.setDescription("$BUILD_DESCRIPTION")
 node(LABEL) {
     timestamps {
         stage('Checkout') {
-            dir('podio') {
+            dir(pkg_name) {
                 retry(3) {
                     // TODO: Use the git step when it has implemented specifying refspecs
-                    checkout([$class: 'GitSCM', branches: [[name: PODIO_BRANCH]], doGenerateSubmoduleConfigurations: false, extensions: [],
-                            submoduleCfg: [], userRemoteConfigs: [[refspec: PODIO_REFSPEC, url: env.GIT_URL]]])
+                    checkout([$class: 'GitSCM', branches: [[name: PKG_BRANCH]], doGenerateSubmoduleConfigurations: false, extensions: [],
+                            submoduleCfg: [], userRemoteConfigs: [[refspec: PKG_REFSPEC, url: env.GIT_URL]]])
                 }
             }
 
@@ -39,8 +41,8 @@ node(LABEL) {
             //         retry(3) {
             //             def rootTestUrl = 'https://github.com/root-project/roottest.git';
             //             // TODO: Use the git step when it has implemented specifying refspecs
-            //             checkout([$class: 'GitSCM', branches: [[name: PODIOTEST_BRANCH]], doGenerateSubmoduleConfigurations: false, extensions: [],
-            //                     submoduleCfg: [], userRemoteConfigs: [[refspec: PODIOTEST_REFSPEC, url: rootTestUrl]]])
+            //             checkout([$class: 'GitSCM', branches: [[name: PKGTEST_BRANCH]], doGenerateSubmoduleConfigurations: false, extensions: [],
+            //                     submoduleCfg: [], userRemoteConfigs: [[refspec: PKGTEST_REFSPEC, url: rootTestUrl]]])
             //         }
             //     }
             // }
@@ -58,7 +60,7 @@ node(LABEL) {
                 if (LABEL == 'windows10') {
                     bat 'rootspi/jenkins/jk-all.bat'
                 } else {
-                    sh 'fcc-spi/builds/podio-build.sh'
+                    sh 'fcc-spi/builds/' + pkg_name + '-build.sh'
                 }
             }
 
@@ -90,7 +92,7 @@ node(LABEL) {
 
 
         stage('Clean up') {
-            sh 'rm -r $WORKSPACE/podio/build'
+            sh 'rm -r $WORKSPACE/' + pkg_name + '/build'
         }
         //stash includes: 'rootspi/jenkins/logparser-rules/*', name: 'logparser-rules'
     }

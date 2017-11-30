@@ -36,8 +36,8 @@ class GenericBuild implements Serializable {
         }
 
         // Always build the same branch on root a nd roottest
-        addBuildParameter('PODIO_BRANCH', script.params.VERSION)
-        addBuildParameter('PODIOTEST_BRANCH', script.params.VERSION)
+        addBuildParameter('PKG_BRANCH', script.params.VERSION)
+        addBuildParameter('PKGTEST_BRANCH', script.params.VERSION)
     }
 
     private def performBuild(label, compiler, buildType) {

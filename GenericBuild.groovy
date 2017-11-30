@@ -12,7 +12,7 @@ properties([
     ])
 ])
 
-def pkg_name=PKG_NAME.toLowerCase()
+def pkg_name=params.PKG_NAME.toLowerCase()
 
 // Treat parameters as environment variables
 for (ParameterValue p in params) {

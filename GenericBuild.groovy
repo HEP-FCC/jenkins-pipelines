@@ -12,7 +12,7 @@ properties([
     ])
 ])
 
-def pkg_name=params.PKG_NAME.toLowerCase()
+def packageName=params.PKG_NAME
 
 // Treat parameters as environment variables
 for (ParameterValue p in params) {
@@ -28,7 +28,7 @@ currentBuild.setDescription("$BUILD_DESCRIPTION")
 node(LABEL) {
     timestamps {
         stage('Checkout') {
-            dir(pkg_name) {
+            dir(packageName) {
                 retry(3) {
                     // TODO: Use the git step when it has implemented specifying refspecs
                     checkout([$class: 'GitSCM', branches: [[name: PKG_BRANCH]], doGenerateSubmoduleConfigurations: false, extensions: [],
@@ -60,7 +60,7 @@ node(LABEL) {
                 if (LABEL == 'windows10') {
                     bat 'rootspi/jenkins/jk-all.bat'
                 } else {
-                    sh 'fcc-spi/builds/' + pkg_name + '-build.sh'
+                    sh 'fcc-spi/builds/' + packageName + '-build.sh'
                 }
             }
 
@@ -92,7 +92,7 @@ node(LABEL) {
 
 
         stage('Clean up') {
-            sh 'rm -r $WORKSPACE/' + pkg_name + '/build'
+            sh 'rm -r $WORKSPACE/' + packageName + '/build'
         }
         //stash includes: 'rootspi/jenkins/logparser-rules/*', name: 'logparser-rules'
     }

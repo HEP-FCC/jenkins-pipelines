@@ -5,9 +5,8 @@ import cern.root.pipeline.*
 
 properties([
     parameters([
-        string(name: 'PACKAGE_NAME', defaultValue: '', description: 'Name of the package to be built'),
         string(name: 'ghprbPullId', defaultValue: '61'),
-        string(name: 'ghprbGhRepository', defaultValue: 'HEP-FCC/podio'),
+        string(name: 'ghprbGhRepository', defaultValue: ''),
         string(name: 'ghprbCommentBody', defaultValue: '@phsft-bot build'),
         string(name: 'ghprbTargetBranch', defaultValue: 'master'),
         string(name: 'ghprbActualCommit', defaultValue: ''),
@@ -22,17 +21,18 @@ properties([
 ])
 
 timestamps {
-    if(!params.PARENT){
-        params.PARENT = params.PACKAGE_NAME.toLowerCase()  + "-pullrequests-trigger"
-    }
+    def packageName = params.ghprbGhRepository.tokenize('/').last().toLowerCase()
+    def buildJobName = packageName + "-pullrequests-build"
 
-    def buildJobName = params.PACKAGE_NAME.toLowerCase()  + "-pullrequests-build"
+    if(!params.PARENT){
+        params.PARENT = packageName.toUpperCase()  + "-pullrequests-trigger"
+    }
 
     GitHub gitHub = new GitHub(this, PARENT, ghprbGhRepository, ghprbPullId, params.ghprbActualCommit)
     BotParser parser = new BotParser(this, params.ExtraCMakeOptions)
     GenericBuild build = new GenericBuild(this, buildJobName, params.MODE)
 
-    build.addBuildParameter('PKG_NAME', '${params.PACKAGE_NAME}')
+    build.addBuildParameter('PKG_NAME', '${packageName}')
     build.addBuildParameter('PKG_REFSPEC', '+refs/pull/*:refs/remotes/origin/pr/*')
     build.addBuildParameter('PKG_BRANCH', "origin/pr/${ghprbPullId}/merge")
     build.addBuildParameter('PKGTEST_BRANCH', "${params.ghprbTargetBranch}")

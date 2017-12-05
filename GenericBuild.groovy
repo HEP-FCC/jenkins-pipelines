@@ -20,7 +20,7 @@ for (ParameterValue p in params) {
 }
 
 // TODO: This should be avoided
-env.GIT_URL = 'https://github.com/HEP-FCC/podio.git'
+env.GIT_URL = 'https://github.com/HEP-FCC/' + packageName + '.git'
 
 currentBuild.setDisplayName("#$BUILD_NUMBER $LABEL/$COMPILER $BUILD_NOTE")
 currentBuild.setDescription("$BUILD_DESCRIPTION")

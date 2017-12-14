@@ -91,9 +91,9 @@ node(LABEL) {
         }
 
 
-        stage('Clean up') {
-            sh 'rm -r $WORKSPACE/' + packageName + '/build'
-        }
+        // stage('Clean up') {
+        //     sh 'rm -r $WORKSPACE/' + packageName + '/build'
+        // }
         //stash includes: 'rootspi/jenkins/logparser-rules/*', name: 'logparser-rules'
     }
 }

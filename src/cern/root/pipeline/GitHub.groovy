@@ -86,9 +86,9 @@ class GitHub implements Serializable {
     void postResultComment(buildWrapper) {
         def commentBuilder = new StringBuilder()
         def buildUrl = Jenkins.activeInstance.rootUrl + buildWrapper.result.rawBuild.url
-        commentBuilder.append("Build failed on ${buildWrapper.label}/${buildWrapper.compiler}.\n")
+        commentBuilder.append("Build failed on `${buildWrapper.label}`/`${buildWrapper.compiler}`\n")
         commentBuilder.append("[See console output](${buildUrl}console).\n")
-        
+
         def logParserAction = buildWrapper.result.rawBuild.getAction(LogParserAction.class)
         def testResultAction = buildWrapper.result.rawBuild.getAction(TestResultAction.class)
 
@@ -108,9 +108,9 @@ class GitHub implements Serializable {
 
                     if (endPos > startPos) {
                         def msg = line.substring(startPos, endPos)
-                        
+
                         if (totalMessages++ < maxMessages) {
-                            commentBuilder.append("- $msg \n")                            
+                            commentBuilder.append("- $msg \n")
                         } else {
                             ignoredMessages++
                         }
@@ -140,7 +140,7 @@ class GitHub implements Serializable {
                         def msg = line.substring(startPos, endPos)
 
                         if (totalMessages++ < maxMessages) {
-                            commentBuilder.append("- $msg \n")                            
+                            commentBuilder.append("- $msg \n")
                         } else {
                             ignoredMessages++
                         }

@@ -63,6 +63,7 @@ timestamps {
     stage('Publish reports') {
         if (currentBuild.result == 'SUCCESS') {
             gitHub.setSucceedCommitStatus('Build passed')
+            gitHub.postComment("All tests succeeded")
         } else if (currentBuild.result != 'ABORTED') {
             gitHub.setFailedCommitStatus('Build failed')
         }

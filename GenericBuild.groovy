@@ -61,6 +61,22 @@ node(LABEL) {
                     bat 'rootspi/jenkins/jk-all.bat'
                 } else {
                     sh 'fcc-spi/builds/' + packageName + '-build.sh'
+
+                    // Fail if any test fails
+                    def testThreshold = [[$class: 'FailedThreshold',
+                            failureNewThreshold: '0', failureThreshold: '0', unstableNewThreshold: '0',
+                            unstableThreshold: '0'], [$class: 'SkippedThreshold', failureNewThreshold: '',
+                            failureThreshold: '', unstableNewThreshold: '', unstableThreshold: '']]
+
+                    step([$class: 'XUnitBuilder',
+                            testTimeMargin: '3000', thresholdMode: 1, thresholds: testThreshold,
+                            tools: [[$class: 'CTestType',
+                                    deleteOutputFiles: true, failIfNotNew: false, pattern: 'build.*/Testing/*/Test.xml',
+                                    skipNoTestFiles: false, stopProcessingIfError: true]]])
+
+                    if (currentBuild.result == 'FAILURE') {
+                        throw new Exception("Test result caused build to fail")
+                    }
                 }
             }
 

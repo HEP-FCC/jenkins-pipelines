@@ -33,8 +33,8 @@ timestamps {
     GenericBuild build = new GenericBuild(this, buildJobName, params.MODE)
 
     build.addBuildParameter('PKG_NAME', "${packageName}")
-    build.addBuildParameter('PKG_REFSPEC', '+refs/pull/*:refs/remotes/origin/pr/*')
-    build.addBuildParameter('PKG_BRANCH', "origin/pr/${ghprbPullId}/merge")
+    build.addBuildParameter('PKG_REFSPEC', "+refs/pull/${ghprbPullId}/head:refs/remotes/origin/pr/${ghprbPullId}/head")
+    build.addBuildParameter('PKG_BRANCH', "origin/pr/${ghprbPullId}/head")
     build.addBuildParameter('PKGTEST_BRANCH', "${params.ghprbTargetBranch}")
     build.addBuildParameter('GIT_COMMIT', "${params.sha1}")
     build.addBuildParameter('BUILD_NOTE', "PR #$ghprbPullId")

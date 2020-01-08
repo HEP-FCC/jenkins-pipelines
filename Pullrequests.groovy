@@ -6,28 +6,36 @@ import cern.root.pipeline.*
 properties([
     parameters([
         string(name: 'ghprbPullId', defaultValue: '61'),
-        string(name: 'ghprbGhRepository', defaultValue: 'HEP-FCC/podio'),
-        string(name: 'ghprbCommentBody', defaultValue: '@fcc-bot build'),
+        string(name: 'ghprbGhRepository', defaultValue: ''),
+        string(name: 'ghprbCommentBody', defaultValue: '@phsft-bot build'),
         string(name: 'ghprbTargetBranch', defaultValue: 'master'),
         string(name: 'ghprbActualCommit', defaultValue: ''),
         string(name: 'sha1', defaultValue: ''),
         string(name: 'VERSION', defaultValue: 'master', description: 'Branch to be built'),
-        string(name: 'EXTERNALS', defaultValue: 'ROOT-latest', description: ''),
-        string(name: 'EMPTY_BINARY', defaultValue: 'true', description: 'Boolean to empty the binary directory (i.e. to force a full re-build)'),
-        string(name: 'ExtraCMakeOptions', defaultValue: '-Dvc=OFF -Dimt=ON -Dccache=ON', description: 'Additional CMake configuration options of the form "-Doption1=value1 -Doption2=value2"'),
+        //string(name: 'EXTERNALS', defaultValue: 'ROOT-latest', description: ''),
+        //string(name: 'EMPTY_BINARY', defaultValue: 'true', description: 'Boolean to empty the binary directory (i.e. to force a full re-build)'),
+        string(name: 'ExtraCMakeOptions', defaultValue: '', description: 'Additional CMake configuration options of the form "-Doption1=value1 -Doption2=value2"'),
         string(name: 'MODE', defaultValue: 'pullrequests', description: 'The build mode'),
-        string(name: 'PARENT', defaultValue: 'PODIO-pullrequests-trigger', description: 'Trigger job name')
+        string(name: 'PARENT', defaultValue: '', description: 'Trigger job name')
     ])
 ])
 
 timestamps {
+    def packageName = params.ghprbGhRepository.tokenize('/').last().toLowerCase()
+    def buildJobName = packageName + "-pullrequests-build"
+
+    if(!params.PARENT){
+        params.PARENT = packageName.toUpperCase()  + "-pullrequests-trigger"
+    }
+
     GitHub gitHub = new GitHub(this, PARENT, ghprbGhRepository, ghprbPullId, params.ghprbActualCommit)
     BotParser parser = new BotParser(this, params.ExtraCMakeOptions)
-    GenericBuild build = new GenericBuild(this, 'PODIO-pullrequests-build', params.MODE)
+    GenericBuild build = new GenericBuild(this, buildJobName, params.MODE)
 
-    build.addBuildParameter('PODIO_REFSPEC', '+refs/pull/*:refs/remotes/origin/pr/*')
-    build.addBuildParameter('PODIO_BRANCH', "origin/pr/${ghprbPullId}/merge")
-    build.addBuildParameter('PODIOTEST_BRANCH', "${params.ghprbTargetBranch}")
+    build.addBuildParameter('PKG_NAME', "${packageName}")
+    build.addBuildParameter('PKG_REFSPEC', "+refs/pull/${ghprbPullId}/head:refs/remotes/origin/pr/${ghprbPullId}/head")
+    build.addBuildParameter('PKG_BRANCH', "origin/pr/${ghprbPullId}/head")
+    build.addBuildParameter('PKGTEST_BRANCH', "${params.ghprbTargetBranch}")
     build.addBuildParameter('GIT_COMMIT', "${params.sha1}")
     build.addBuildParameter('BUILD_NOTE', "PR #$ghprbPullId")
 
@@ -55,6 +63,7 @@ timestamps {
     stage('Publish reports') {
         if (currentBuild.result == 'SUCCESS') {
             gitHub.setSucceedCommitStatus('Build passed')
+            gitHub.postComment("All tests succeeded")
         } else if (currentBuild.result != 'ABORTED') {
             gitHub.setFailedCommitStatus('Build failed')
         }

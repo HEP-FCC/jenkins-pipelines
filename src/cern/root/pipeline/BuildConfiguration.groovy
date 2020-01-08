@@ -9,7 +9,7 @@ class BuildConfiguration {
      */
     @NonCPS
     static def getAvailablePlatforms() {
-        return ['centos7', 'mac1011', 'slc6', 'slc6-i686', 'ubuntu14', 'mac1012', 'ubuntu16', 'arm64', 'fedora25', 'windows10']
+        return ['centos7', 'slc6']
     }
 
     /**
@@ -17,7 +17,7 @@ class BuildConfiguration {
      */
     @NonCPS
     static def getAvailableCompilers() {
-        return ['gcc49', 'gcc62', 'native', 'clang_gcc52', 'clang_gcc62', 'icc15', 'icc17', 'classic', 'vc15']
+        return ['gcc8']
     }
 
     /**
@@ -25,11 +25,12 @@ class BuildConfiguration {
      */
     static def getPullrequestConfiguration() {
         return [
-            [label: 'slc6', compiler: 'gcc49', buildType: 'Release']
+            //[label: 'slc6', compiler: 'gcc49', buildType: 'Release']
             //[label: 'mac1012', compiler: 'native', buildType: 'Debug'],
             //[label: 'slc6', compiler: 'gcc49', buildType: 'Debug'],
             //[label: 'slc6', compiler: 'gcc62', buildType: 'Debug'],
-            //[label: 'slc6', compiler: 'gcc62', buildType: 'Release'],
+            [label: 'slc6', compiler: 'gcc8', buildType: 'Release'],
+            [label: 'centos7', compiler: 'gcc8', buildType: 'Release'],
             //[label: 'ubuntu14', compiler: 'native', buildType: 'Debug'],
             //[label: 'ubuntu14', compiler: 'native', buildType: 'Release'],
             //[label: 'windows10', compiler: 'vc15', buildType: 'Release']
@@ -41,7 +42,7 @@ class BuildConfiguration {
      */
     static def getIncrementalConfiguration() {
         return [
-            [label: 'centos7', compiler: 'gcc62', buildType: 'Debug']
+            [label: 'centos7', compiler: 'gcc8', buildType: 'Debug']
             //[label: 'slc6', compiler: 'gcc62', buildType: 'Debug']
         ]
     }

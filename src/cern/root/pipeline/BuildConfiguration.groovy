@@ -29,7 +29,7 @@ class BuildConfiguration {
             //[label: 'mac1012', compiler: 'native', buildType: 'Debug'],
             //[label: 'slc6', compiler: 'gcc49', buildType: 'Debug'],
             //[label: 'slc6', compiler: 'gcc62', buildType: 'Debug'],
-            [label: 'centos7', compiler: 'gcc8', buildType: 'Release'],
+            [label: 'centos7', compiler: 'gcc8', buildType: 'Release']
             //[label: 'ubuntu14', compiler: 'native', buildType: 'Debug'],
             //[label: 'ubuntu14', compiler: 'native', buildType: 'Release'],
             //[label: 'windows10', compiler: 'vc15', buildType: 'Release']
